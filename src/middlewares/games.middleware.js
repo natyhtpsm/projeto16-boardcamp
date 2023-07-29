@@ -1,5 +1,5 @@
-import { db } from "../database/database";
-import { gameSchema } from "../schemas/game.schema";
+import { db } from "../database/database.js";
+import { gameSchema } from "../schemas/game.schema.js";
 
 export async function gamesMiddleware(req, res, next){
     const { name, image, stockTotal, categoryId, pricePerDay } = req.body;
