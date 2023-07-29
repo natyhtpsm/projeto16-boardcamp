@@ -1,6 +1,6 @@
 import { customerSchema } from "../schemas/customers.schema.js";
 
-export function customersmiddleware(req, res, next) {
+export function customersMiddleware(req, res, next) {
     const { name, phone, cpf, birthday } = req.body;
     const { error } = customerSchema.validate(req.body);
     
