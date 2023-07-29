@@ -9,8 +9,9 @@ export async function gamesMiddleware(req, res, next){
         return res.status(400).send(validation.error.message);
     }
     const nameExists = await db.query(`SELECT * FROM games WHERE name = $1`, [name]);
+    console.log(nameExists.rows);
 
-    if(nameExists){
+    if(nameExists.rows.length > 0){
         return res.status(409).send("This game name already exists");
     }
     if(stockTotal < 0 || pricePerDay < 0){
