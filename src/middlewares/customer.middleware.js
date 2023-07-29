@@ -12,10 +12,11 @@ export function customersMiddleware(req, res, next) {
         return res.status(400).send('Invalid CPF');
     }
 
-    const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+    const dateRegex = /^\d{2}\/\d{2}\/\d{4}$/;
     if (!dateRegex.test(birthday)) {
         return res.status(400).send('Invalid date format');
     }
+    
     next();
 }
 
