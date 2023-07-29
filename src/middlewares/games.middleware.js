@@ -5,8 +5,8 @@ export async function gamesMiddleware(req, res, next){
     const { name, image, stockTotal, categoryId, pricePerDay } = req.body;
 
     const validation = gameSchema.validate(req.body);
-    if (!validation){
-        return res.status(400).send(validation.error.message);
+    if (validation.error) { 
+      return res.status(400).send(validation.error.message);
     }
     const nameExists = await db.query(`SELECT * FROM games WHERE name = $1`, [name]);
     console.log(nameExists.rows);
