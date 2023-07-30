@@ -1,21 +1,25 @@
 import { db } from "../database/database.js";
+import { parseISO, format } from "date-fns";
 
 export async function postCustomersController(req, res) {
-
     const { name, phone, cpf, birthday } = req.body;
-    
+
     try {
         const cpfExists = await db.query(`SELECT * FROM customers WHERE cpf = $1`, [cpf]);
         if (cpfExists.rowCount > 0) {
             return res.status(409).send('CPF already exists');
         }
-        await db.query(`INSERT INTO customers (name, phone, cpf, birthday) VALUES ($1, $2, $3, $4)`, [name, phone, cpf, birthday]);
+
+        const adjustedBirthday = new Date(birthday).toISOString().split('T')[0];
+
+        await db.query(`INSERT INTO customers (name, phone, cpf, birthday) VALUES ($1, $2, $3, $4)`, [name, phone, cpf, adjustedBirthday]);
         res.status(201).send('Customer created successfully');
     } catch (error) {
         console.log(error);
         res.sendStatus(500);
     }
 }
+
 
 export async function putCustomersController(req, res) {
     const { name, phone, cpf, birthday } = req.body;
