@@ -47,22 +47,21 @@ export async function getAllCustomersController(req, res) {
     const { cpf } = req.query;
     try {
         if (cpf) {
-            const customers = await db.query(`SELECT * FROM customers WHERE cpf LIKE $1;`, [`${cpf}%`]);
+            const customers = await db.query(`SELECT id, name, phone, cpf, TO_CHAR(birthday, 'YYYY-MM-DD') AS birthday FROM customers WHERE cpf LIKE $1;`, [`${cpf}%`]);
             return res.status(200).send(customers.rows);
         }
-        const customers = await db.query(`SELECT * FROM customers`);
+        const customers = await db.query(`SELECT id, name, phone, cpf, TO_CHAR(birthday, 'YYYY-MM-DD') AS birthday FROM customers`);
         res.status(200).send(customers.rows);
     } catch (error) {
         console.log(error);
         res.sendStatus(500);
     }
-
 }
 
 export async function getOneCustomerController(req, res) {
     const { id } = req.params;
     try {
-        const customer = await db.query(`SELECT * FROM customers WHERE id = $1`, [id]);
+        const customer = await db.query(`SELECT id, name, phone, cpf, TO_CHAR(birthday, 'YYYY-MM-DD') AS birthday FROM customers WHERE id = $1`, [id]);
         if (customer.rowCount === 0) {
             return res.sendStatus(404);
         }
@@ -72,4 +71,5 @@ export async function getOneCustomerController(req, res) {
         res.sendStatus(500);
     }
 }
+
 
