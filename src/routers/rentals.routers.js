@@ -1,14 +1,14 @@
 import { Router } from "express";
-import { validateSchema } from "../middlewares/validateSchema.js"
-import { registerRentalsSchema } from "../schemas/rentals.schema.js";
-import { findRentals, registerRental, updatingRentalByID, deleteRental } from "../controllers/rentals.controllers.js";
+import { rentalsMiddleware } from "../middlewares/rentals.middleware.js";
+import { getRentalController, postRentalController, postRentalIdController, deleteRentalController } from "../controllers/rentals.controller.js";
+
 
 const rentalsRouter = Router();
 
-rentalsRouter.get("/rentals", findRentals);
-rentalsRouter.post("/rentals", validateSchema(registerRentalsSchema), registerRental);
-rentalsRouter.put("/rentals/:id/return", updatingRentalByID);
-rentalsRouter.delete("/rentals/:id", deleteRental);
+rentalsRouter.get("/rentals", getRentalController);
+rentalsRouter.post("/rentals", rentalsMiddleware, postRentalController);
+rentalsRouter.put("/rentals/:id/return", postRentalIdController);
+rentalsRouter.delete("/rentals/:id", deleteRentalController);
 
 
-export default rentalsRouter
+export default rentalsRouter;
