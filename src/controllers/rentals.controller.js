@@ -80,11 +80,9 @@ export async function postRentalIdController(req, res) {
 
         const currentDate = new Date();
         const returnDate = new Date(currentDate.toISOString().split("T")[0]);
-        const formattedReturnDate = returnDate.toISOString().split("T")[0];
-
         const rentDate = new Date(rental.rows[0].rentDate.toISOString().split("T")[0]);
         const timeDiff = Math.abs(returnDate.getTime() - rentDate.getTime());
-        const daysLater = Math.ceil(timeDiff / (1000 * 3600 * 24));
+        const daysLater = Math.ceil(timeDiff / (1000 * 3600 * 24)) - 1;
 
         const originalPricePerDay = rental.rows[0].originalPrice / rental.rows[0].daysRented;
         const delayFee = daysLater > rental.rows[0].daysRented ? daysLater * originalPricePerDay : 0;
