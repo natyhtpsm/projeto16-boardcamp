@@ -68,7 +68,6 @@ export async function postRentalController(req, res) {
         res.status(500).send(err.message);
     }
 };
-
 export async function postRentalIdController(req, res) {
     const id = Number(req.params.id);
     if (isNaN(id)) return res.sendStatus(400);
