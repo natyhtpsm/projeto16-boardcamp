@@ -76,24 +76,30 @@ export async function postRentalIdController(req, res) {
     try {
         const rental = await db.query("SELECT * FROM rentals WHERE id=$1 ", [id]);
         if (rental.rows.length === 0) return res.status(404).send("Aluguel não encontrado");
-        const currentDate = new Date()
+
+        if (rental.rows[0].returnDate !== null) return res.status(400).send("O aluguel já está finalizado");
+
+        const currentDate = new Date();
         const returnDate = new Date(currentDate.toISOString().split("T")[0]);
         const formattedReturnDate = returnDate.toISOString().split("T")[0];
-        const startingRentDate = new Date(rental.rows[0].rentDate.toISOString().split("T")[0]);
-        const timeDiff = Math.abs(returnDate.getTime() - startingRentDate.getTime());
-        const daysLater = Math.ceil(timeDiff / (1000 * 3600 * 24));
-        let delayFee;
-        if (daysLater > rental.rows[0].daysRented) {
-            delayFee = daysLater * rental.rows[0].originalPrice;
-        } else {
-            delayFee = null;
-        }
 
-        await db.query(`UPDATE rentals SET "returnDate"=$1, "delayFee"=$2 WHERE id=$3 `, [formattedReturnDate, delayFee, id]);        res.sendStatus(200);
+        const rentDate = new Date(rental.rows[0].rentDate.toISOString().split("T")[0]);
+        const timeDiff = Math.abs(returnDate.getTime() - rentDate.getTime());
+        const daysLater = Math.ceil(timeDiff / (1000 * 3600 * 24));
+        const originalPrice = rental.rows[0].originalPrice;
+        const delayFee = daysLater > rental.rows[0].daysRented ? daysLater * originalPrice : null;
+
+        await db.query(
+            `UPDATE rentals SET "returnDate"=$1, "delayFee"=$2 WHERE id=$3`,
+            [formattedReturnDate, delayFee, id]
+        );
+
+        res.sendStatus(200);
     } catch (err) {
         res.status(500).send(err.message);
     }
 };
+
 
 export async function deleteRentalController(req, res) {
     const id = Number(req.params.id);
